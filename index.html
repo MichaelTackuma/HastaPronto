@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>18 de abril</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Marcellus&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#050810;
+    --bg2:#0c1524;
+    --bg3:#02040a;
+    --gold:#a9bdd1;
+    --gold-soft:#d3e0ec;
+    --rose:#8f97c9;
+    --lav:#9fb0e0;
+    --blue:#6fa3d8;
+    --ink:#eef2f8;
+    --ink-dim:rgba(238,242,248,.6);
+    --serif:'Cormorant Garamond', 'Georgia', serif;
+    --title:'Marcellus', serif;
+    --ui:'Jost', sans-serif;
+    --stage-shift: 0deg;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background:var(--bg1);
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  body{
+    font-family:var(--serif);
+    color:var(--ink);
+    height:100%;
+    width:100%;
+    position:fixed;
+    inset:0;
+  }
+
+  /* ===== scene wrapper ===== */
+  #scene{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(120% 90% at 50% 15%, rgba(111,163,216,.10), transparent 60%),
+      radial-gradient(90% 70% at 82% 85%, rgba(159,176,224,.07), transparent 55%),
+      linear-gradient(160deg, var(--bg2), var(--bg1) 55%, var(--bg3));
+    transition: filter 2.2s ease, background-color 2.2s ease;
+  }
+  #scene::after{
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(120% 90% at 50% 45%, transparent 40%, rgba(0,0,0,.55) 100%);
+    pointer-events:none;
+  }
+  #scene.mood-warm{
+    background:
+      radial-gradient(120% 90% at 50% 20%, rgba(143,151,201,.14), transparent 60%),
+      radial-gradient(90% 70% at 80% 85%, rgba(211,224,236,.08), transparent 55%),
+      linear-gradient(160deg, #14202f, #0b1420 55%, #04070c);
+  }
+  #scene.mood-glow{
+    background:
+      radial-gradient(130% 95% at 50% 22%, rgba(211,224,236,.18), transparent 62%),
+      radial-gradient(90% 70% at 78% 85%, rgba(111,163,216,.14), transparent 55%),
+      linear-gradient(160deg, #182430, #0e1620 55%, #05080d);
+  }
+  #scene.mood-rise{
+    background:
+      radial-gradient(130% 95% at 50% 15%, rgba(111,163,216,.16), transparent 62%),
+      radial-gradient(90% 70% at 78% 85%, rgba(159,176,224,.13), transparent 55%),
+      linear-gradient(170deg, #0c1226, #0a0f1e 55%, #030509);
+  }
+  #scene.mood-black{ background:#010203; }
+
+  /* ===== sparkles ===== */
+  #sparkles{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .spark{
+    position:absolute;
+    width:3px; height:3px;
+    border-radius:50%;
+    opacity:0;
+    animation: twinkle linear infinite;
+  }
+  @keyframes twinkle{
+    0%{ opacity:0; transform:translateY(0) scale(.6); }
+    12%{ opacity:var(--peak,.7); }
+    50%{ opacity:calc(var(--peak,.7)*.5); transform:translateY(14px) scale(1); }
+    88%{ opacity:var(--peak,.7); }
+    100%{ opacity:0; transform:translateY(30px) scale(.6); }
+  }
+  .burst .spark{ animation-duration: 1.6s !important; }
+
+  /* ===== cover / book ===== */
+  #cover{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:26px;
+    z-index:30;
+    text-align:center;
+    padding:24px;
+    transition: opacity 1.4s ease;
+  }
+  #cover.hide{ opacity:0; pointer-events:none; }
+
+  .book-wrap{
+    perspective:1600px;
+    width:min(64vw, 300px);
+    aspect-ratio: 3/4;
+    cursor:pointer;
+    filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
+  }
+  .book{
+    position:relative;
+    width:100%; height:100%;
+    transform-style:preserve-3d;
+  }
+  .cover-face, .cover-back{
+    position:absolute; inset:0;
+    border-radius:4px 10px 10px 4px;
+    background:
+      linear-gradient(135deg, #2a1338, #150822 70%);
+    border:1px solid rgba(216,178,106,.5);
+    box-shadow:
+      inset 0 0 0 1px rgba(216,178,106,.15),
+      inset 0 0 40px rgba(216,178,106,.06);
+  }
+  .cover-back{ background:linear-gradient(135deg,#1c0e28,#0f0619); }
+  .cover-face{
+    display:flex; align-items:center; justify-content:center;
+    transform-origin:left center;
+    transition: transform 1.5s cubic-bezier(.6,.05,.2,1);
+    z-index:2;
+  }
+  .cover-face::before{
+    content:'';
+    position:absolute; inset:10px;
+    border:1px solid rgba(216,178,106,.35);
+    border-radius:2px 8px 8px 2px;
+  }
+  .emblem{
+    font-family:var(--title);
+    color:var(--gold-soft);
+    font-size:clamp(28px,7vw,40px);
+    letter-spacing:.06em;
+  }
+  .emblem small{
+    display:block;
+    font-family:var(--ui);
+    font-size:11px;
+    letter-spacing:.32em;
+    color:rgba(240,217,168,.55);
+    margin-top:10px;
+    font-weight:300;
+  }
+  .book-wrap.open .cover-face{
+    transform: rotateY(-155deg);
+  }
+  .book-spine{
+    position:absolute; left:-6px; top:2%; bottom:2%; width:10px;
+    background:linear-gradient(180deg,#3a1f4a,#12071e);
+    border-radius:6px 0 0 6px;
+    box-shadow: inset -2px 0 4px rgba(0,0,0,.5);
+  }
+
+  .cover-hint{
+    font-family:var(--ui);
+    font-weight:300;
+    font-size:13px;
+    letter-spacing:.08em;
+    color:var(--ink-dim);
+    max-width:360px;
+    line-height:1.7;
+  }
+  .cover-hint b{ color:var(--gold-soft); font-weight:400; }
+  .tap-label{
+    font-family:var(--ui);
+    font-size:11px;
+    letter-spacing:.3em;
+    color:rgba(211,224,236,.7);
+    animation: pulseLabel 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseLabel{ 0%,100%{opacity:.45;} 50%{opacity:1;} }
+  .tap-label.locked{
+    letter-spacing:.05em;
+    font-size:12px;
+    line-height:1.8;
+    color:rgba(143,151,201,.85);
+    animation:none;
+    max-width:300px;
+  }
+  .tap-label.locked .remaining{ display:block; margin-top:8px; font-size:10px; letter-spacing:.15em; opacity:.6; }
+  .book-wrap.locked{ cursor:default; }
+  .book-wrap.locked .book{ filter:saturate(.6) brightness(.8); }
+  .book-wrap.locked.shake .book{ animation: shake .5s ease; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px) rotate(-1deg); }
+    40%{ transform:translateX(5px) rotate(1deg); }
+    60%{ transform:translateX(-4px); }
+    80%{ transform:translateX(3px); }
+  }
+
+  /* ===== stage / reading experience ===== */
+  #stage{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    z-index:10;
+    opacity:0;
+    transition:opacity 1.2s ease;
+  }
+  #stage.show{ opacity:1; }
+
+  .frame{
+    position:relative;
+    width:min(84vw, 900px);
+    max-width:92vw;
+  }
+  .corner{
+    position:absolute; width:26px; height:26px;
+    border:1px solid rgba(216,178,106,.35);
+    opacity:.7;
+  }
+  .corner.tl{ top:-18px; left:-18px; border-right:none; border-bottom:none; }
+  .corner.tr{ top:-18px; right:-18px; border-left:none; border-bottom:none; }
+  .corner.bl{ bottom:-18px; left:-18px; border-right:none; border-top:none; }
+  .corner.br{ bottom:-18px; right:-18px; border-left:none; border-top:none; }
+
+  .line{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    color:var(--ink);
+    text-align:center;
+    line-height:1.55;
+    font-size:clamp(19px, 3.1vw, 34px);
+    max-width:78ch;
+    margin:0 auto;
+    white-space:pre-line;
+    opacity:0;
+    transform:translateY(10px);
+    transition: opacity .8s ease, transform .8s ease, font-size .6s ease;
+    text-shadow: 0 0 22px rgba(216,178,106,.10);
+  }
+  .line.visible{ opacity:1; transform:translateY(0); }
+  .line.slow{ transition-duration:1.2s, 1.2s; transition-property:opacity, transform; }
+  .line.veryslow{ transition-duration:1.6s, 1.6s; transition-property:opacity, transform; }
+  .line.size-large{ font-size:clamp(28px, 5.6vw, 52px); font-weight:500; }
+  .line.size-small{ font-size:clamp(14px, 2.1vw, 19px); letter-spacing:.04em; color:var(--ink-dim); }
+
+  /* ===== ui controls ===== */
+  #ui-top{
+    position:absolute; top:calc(16px + env(safe-area-inset-top,0px)); right:16px;
+    z-index:40; display:flex; gap:10px;
+  }
+  .ctrl-btn{
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(20,10,32,.55);
+    border:1px solid rgba(216,178,106,.35);
+    color:var(--gold-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+    cursor:pointer;
+    backdrop-filter: blur(6px);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .ctrl-btn:active{ transform:scale(.9); }
+  .ctrl-btn:hover{ background:rgba(20,10,32,.8); }
+
+  #progress-wrap{
+    position:absolute; left:0; right:0; bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    display:flex; justify-content:center; z-index:35;
+  }
+  #progress-track{
+    width:min(50vw, 240px); height:2px; background:rgba(255,255,255,.12); border-radius:2px; overflow:hidden;
+  }
+  #progress-bar{ height:100%; width:0%; background:linear-gradient(90deg, var(--rose), var(--gold)); transition:width .4s linear; }
+
+  #skip-btn{
+    position:absolute; left:16px; bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    z-index:40;
+    font-family:var(--ui); font-weight:300; font-size:11px; letter-spacing:.2em;
+    color:var(--ink-dim); background:none; border:none; cursor:pointer;
+    padding:8px;
+  }
+  #skip-btn:hover{ color:var(--gold-soft); }
+
+  /* ===== closing ===== */
+  #closing{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    z-index:50; background:#020104; opacity:0; pointer-events:none;
+    transition:opacity 2s ease;
+  }
+  #closing.show{ opacity:1; pointer-events:auto; }
+  #close-symbol{
+    width:14px; height:14px; border-radius:50%;
+    background:radial-gradient(circle, var(--gold-soft), transparent 70%);
+    opacity:0; animation: fadeInSymbol 2s ease forwards;
+    animation-delay:1s;
+    cursor:pointer;
+  }
+  @keyframes fadeInSymbol{ to{ opacity:.8; } }
+  #restart-panel{
+    position:absolute; text-align:center; opacity:0; transition:opacity 1.2s ease;
+    font-family:var(--ui); font-weight:300; color:var(--ink-dim); font-size:12px; letter-spacing:.1em;
+    max-width:min(86vw, 540px);
+    padding:0 20px;
+  }
+  #restart-panel.show{ opacity:1; }
+  #restart-panel .heart{ display:block; font-size:20px; margin-bottom:16px; }
+  #restart-panel .closing-title{
+    color:var(--gold-soft); font-family:var(--serif); font-style:italic; font-weight:500;
+    font-size:clamp(20px,3.4vw,28px); letter-spacing:0; margin-bottom:26px;
+  }
+  #restart-panel .closing-quote{
+    margin:0 0 14px 0; font-family:var(--serif); font-style:italic; font-weight:400;
+    font-size:clamp(14px,1.9vw,17px); line-height:1.7; color:var(--ink-dim);
+  }
+  #restart-panel .closing-quote cite{
+    display:block; margin-top:8px; font-style:normal; font-size:11px;
+    letter-spacing:.15em; color:rgba(211,224,236,.5);
+  }
+  #restart-panel .closing-note{
+    font-family:var(--serif); font-style:italic; font-weight:400;
+    font-size:clamp(13px,1.8vw,16px); line-height:1.6; color:var(--ink-dim);
+    margin:0 0 28px 0;
+  }
+  #restart-panel .lock-msg{
+    font-family:var(--ui); font-weight:300; font-size:11px; letter-spacing:.08em;
+    color:rgba(143,151,201,.65);
+  }
+  #restart-panel .lock-remaining{ display:block; margin-top:6px; opacity:.7; }
+
+  /* ===== orientation hint ===== */
+  #rotate-hint{
+    position:fixed; inset:0; z-index:60;
+    background:#050112; color:var(--ink-dim);
+    display:none; align-items:center; justify-content:center; flex-direction:column; gap:14px;
+    font-family:var(--ui); font-weight:300; font-size:13px; letter-spacing:.1em; text-align:center; padding:30px;
+  }
+  #rotate-hint .icon{ font-size:34px; animation: rot 1.8s ease-in-out infinite; }
+  @keyframes rot{ 0%,100%{ transform:rotate(0deg);} 50%{ transform:rotate(90deg);} }
+  @media (max-aspect-ratio: 3/4) and (max-height:520px){
+    #rotate-hint.active{ display:flex; }
+  }
+
+  audio{ display:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .spark{ animation:none; opacity:.3; }
+    .tap-label{ animation:none; opacity:.8; }
+    .cover-face{ transition-duration:.4s; }
+  }
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <div id="sparkles"></div>
+</div>
+
+<div id="rotate-hint"><div class="icon">📱</div><div>Para vivir mejor esta carta,<br>gira tu pantalla en horizontal</div></div>
+
+<div id="cover">
+  <div class="book-wrap" id="bookWrap">
+    <div class="book">
+      <div class="cover-back"></div>
+      <div class="cover-face">
+        <div class="book-spine"></div>
+        <div class="emblem">18 de abril<small>toca si gustas ojitosd cafeces</small></div>
+      </div>
+    </div>
+  </div>
+  <p class="cover-hint">Antes de abrirlo — <b>debes estar segura de querer leerlo</b></p>
+  <div class="tap-label">TOCA PARA ABRIR</div>
+</div>
+
+<div id="ui-top">
+  <button class="ctrl-btn" id="musicBtn" title="Música de fondo">♪</button>
+  <input type="file" id="musicFile" accept="audio/*" style="display:none">
+</div>
+
+<div id="stage">
+  <div class="frame">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <p class="line" id="lineEl"></p>
+  </div>
+</div>
+
+<div id="progress-wrap"><div id="progress-track"><div id="progress-bar"></div></div></div>
+<button id="skip-btn">saltar</button>
+
+<div id="closing">
+  <div id="close-symbol" title="fin"></div>
+  <div id="restart-panel">
+    <span class="heart">🤍</span>
+    <div class="closing-title">hasta pronto, mi 18 de abril</div>
+    <p class="closing-quote">"Aunque finjas ser uno de ellos, aún tengo tus anteojos en mi bolsillo, por si algún día deseas ver un mundo en el que eres libre."<cite>— La teoría de Kim</cite></p>
+    <p class="closing-note">Me gusta esa frase, porque yo siempre llevaré tus ojitos cafés… no en mi bolsillo, pero sí en mi mente.</p>
+    <div class="lock-msg" id="lockMsg">no puedes volverlo a leer jsjsjs tal vez… mañana si, solo… tal vez</div>
+  </div>
+</div>
+
+<audio id="bgm" loop preload="none"></audio>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- sparkles ---------- */
+  const sparkColors = ['#d3e0ec','#8f97c9','#9fb0e0','#6fa3d8'];
+  const sparkHost = document.getElementById('sparkles');
+  function makeSpark(){
+    const s = document.createElement('div');
+    s.className='spark';
+    const size = 1.5 + Math.random()*2.2;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.background = sparkColors[Math.floor(Math.random()*sparkColors.length)];
+    s.style.boxShadow = '0 0 6px 1px ' + s.style.background;
+    s.style.setProperty('--peak', (0.3+Math.random()*0.4).toFixed(2));
+    s.style.animationDuration = (5+Math.random()*7)+'s';
+    s.style.animationDelay = (Math.random()*8)+'s';
+    sparkHost.appendChild(s);
+  }
+  for(let i=0;i<32;i++) makeSpark();
+
+  function burstSparkles(){
+    document.getElementById('scene').classList.add('burst');
+    setTimeout(()=>document.getElementById('scene').classList.remove('burst'), 1800);
+  }
+
+  /* ---------- orientation hint ---------- */
+  const rotateHint = document.getElementById('rotate-hint');
+  function checkOrientation(){
+    const isSmall = window.innerWidth < 560;
+    const isPortrait = window.innerHeight > window.innerWidth;
+    if(isSmall && isPortrait){ rotateHint.classList.add('active'); }
+    else{ rotateHint.classList.remove('active'); }
+  }
+  window.addEventListener('resize', checkOrientation);
+  checkOrientation();
+
+  /* ---------- music ---------- */
+  const bgm = document.getElementById('bgm');
+  const musicBtn = document.getElementById('musicBtn');
+  const musicFile = document.getElementById('musicFile');
+  let musicReady = false, playing = false;
+
+  // Intenta cargar automáticamente "music.mp3" si está junto a este archivo (ideal para GitHub Pages).
+  bgm.src = 'coldplay - the scientist (slowed  reverb).mp3';
+  bgm.addEventListener('error', ()=>{ musicReady = false; }, {once:true});
+  bgm.addEventListener('canplaythrough', ()=>{ musicReady = true; }, {once:true});
+
+  function toggleMusic(){
+    if(!musicReady && !bgm.src.startsWith('blob:')){
+      musicFile.click();
+      return;
+    }
+    if(playing){ bgm.pause(); playing=false; musicBtn.textContent='♪'; }
+    else{ bgm.play().catch(()=>{}); playing=true; musicBtn.textContent='‖'; }
+  }
+  musicBtn.addEventListener('click', toggleMusic);
+  musicFile.addEventListener('change', (e)=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    bgm.src = URL.createObjectURL(f);
+    musicReady = true;
+    bgm.play().catch(()=>{});
+    playing = true;
+    musicBtn.textContent='‖';
+  });
+
+  /* ---------- book opening ---------- */
+  const cover = document.getElementById('cover');
+  const bookWrap = document.getElementById('bookWrap');
+  const stage = document.getElementById('stage');
+  const tapLabelEl = document.querySelector('.tap-label');
+  const coverHintEl = document.querySelector('.cover-hint');
+  let started = false;
+
+  /* ---------- bloqueo de 8 horas por navegador/dispositivo -----------
+     Nota honesta: esto se guarda en el almacenamiento local del navegador
+     donde se abre la página. Reconoce ese navegador en ese dispositivo,
+     no es una identificación infalible a nivel de hardware: si la persona
+     usa otro navegador, una ventana de incógnito, o borra los datos del
+     sitio, el bloqueo se reinicia. Para una carta personal como esta,
+     es suficiente. */
+  const LOCK_KEY = 'carta_18abril_ultima_apertura';
+  const LOCK_HOURS = 8;
+
+  function getRemainingLockMs(){
+    const last = parseInt(localStorage.getItem(LOCK_KEY) || '0', 10);
+    if(!last) return 0;
+    const elapsed = Date.now() - last;
+    const total = LOCK_HOURS * 3600 * 1000;
+    return Math.max(0, total - elapsed);
+  }
+  function formatRemaining(ms){
+    const totalMin = Math.ceil(ms/60000);
+    const h = Math.floor(totalMin/60);
+    const m = totalMin % 60;
+    if(h>0) return h+'h '+m+'min';
+    return m+' min';
+  }
+
+  function lockCover(){
+    bookWrap.classList.add('locked');
+    coverHintEl.style.display = 'none';
+    tapLabelEl.classList.add('locked');
+    renderLockText();
+  }
+  function renderLockText(){
+    const remaining = getRemainingLockMs();
+    if(remaining <= 0){
+      bookWrap.classList.remove('locked');
+      tapLabelEl.classList.remove('locked');
+      tapLabelEl.textContent = 'TOCA PARA ABRIR';
+      coverHintEl.style.display = '';
+      return false;
+    }
+    tapLabelEl.innerHTML = 'no puedes volverlo a leer jsjsjs tal vez… mañana si, solo… tal vez<span class="remaining">faltan ' + formatRemaining(remaining) + '</span>';
+    return true;
+  }
+
+  const remainingAtLoad = getRemainingLockMs();
+  if(remainingAtLoad > 0){
+    lockCover();
+    setInterval(()=>{ if(!renderLockText()){} }, 30000);
+  }
+
+  bookWrap.addEventListener('click', ()=>{
+    if(started) return;
+    if(getRemainingLockMs() > 0){
+      bookWrap.classList.add('shake');
+      setTimeout(()=>bookWrap.classList.remove('shake'), 500);
+      return;
+    }
+    started = true;
+    localStorage.setItem(LOCK_KEY, Date.now().toString());
+    bookWrap.classList.add('open');
+    burstSparkles();
+    // intenta iniciar música suavemente en la primera interacción del usuario
+    if(bgm.src && !playing){
+      bgm.volume = 0.85;
+      bgm.play().then(()=>{ playing=true; musicBtn.textContent='‖'; }).catch(()=>{});
+    }
+    setTimeout(()=>{
+      cover.classList.add('hide');
+      stage.classList.add('show');
+      setTimeout(runSequence, 400);
+    }, 1500);
+  });
+
+  /* ---------- letter data ---------- */
+  const scene = document.getElementById('scene');
+  const lineEl = document.getElementById('lineEl');
+  const progressBar = document.getElementById('progress-bar');
+  const skipBtn = document.getElementById('skip-btn');
+
+  const STEPS = [
+    {t:"No quiero que respondas si no quieres… ni que agradezcas nada de esto.", hold:2500},
+    {t:"Solamente quería darte algo bonito.", hold:3500},
+    {t:"Algo que te recuerde que todavía te recuerdo… que te extraño, y bastante.", hold:2200},
+    {t:"No sé… quizá esta sea la única manera que tengo de expresar bien todo lo que siento.", hold:3500},
+    {t:"Tal vez ni siquiera sea necesario.", hold:2500},
+    {t:"Tal vez estés viviendo bien sin mí en tu vida… o tal vez no.", hold:2200},
+    {t:"No lo sé.", hold:3000, pause:2000},
+
+    {t:"Y tampoco quiero que sigas leyendo si no quieres.\nPero si decidiste continuar… quizá encuentres aquí algo que necesitaba decirte.", hold:4000, pause:3000},
+    {t:"¿Te quedaste?", hold:6000, pause:5000},
+
+    {t:"Entiendo.", hold:3000},
+    {t:"Tal vez sea curiosidad… o tal vez quieras saber qué tengo para decir.", hold:2000},
+    {t:"Solo quiero decirte algo muy sencillo:", hold:3000, pause:2500},
+    {t:"Te amo.", hold:5000, size:"large", pause:2000, burst:true},
+    {t:"Mucho.", hold:4000, pause:2500},
+
+    {t:"Y sé que quizá ahora odies escuchar esa palabra viniendo de mí.", hold:5000},
+    {t:"Quizá ya no significa lo mismo para vos.", hold:3500},
+    {t:"Pero no tengo otra palabra que pueda explicar mejor lo que siento.", hold:4500},
+    {t:"Así de simple.", hold:3000, pause:2000},
+
+    {t:"Sé que estamos alejados por el tiempo que yo mismo te pedí… y lo lamento.", hold:5000},
+    {t:"Sé que quizá no fue fácil para vos.", hold:4000},
+    {t:"Tal vez durante este tiempo comenzaste a retomar tu vida como era antes de mí…", hold:4500},
+    {t:"y quizá aprendiste a vivir sin tenerme cerca.", hold:3000, pause:3000},
+
+    {t:"Y no quiero interrumpir eso.", hold:4000, pause:2000},
+    {t:"De hecho… si sentís que estabas sanando y que estas palabras pueden abrir nuevamente una herida, podés dejar de leer aquí.", hold:5000},
+    {t:"No quiero hacerte daño.", hold:3000, pause:2000},
+
+    {t:"Solo quería desearte un bonito Día del Amor y la Amistad.", hold:4000, mood:"warm"},
+    {t:"Tal vez ni siquiera lo celebres.", hold:4000, mood:"warm"},
+    {t:"Tal vez pienses que solamente aparezco en días especiales para decirte cosas bonitas.", hold:3500, mood:"warm"},
+    {t:"Pero yo no quería dejar pasar este día sin recordarte algo.", hold:5000, mood:"warm", pause:2000},
+
+    {t:"Sos una mujer que admiro.", hold:4000, mood:"warm"},
+    {t:"Una mujer esforzada, fuerte, juiciosa…", hold:4000, mood:"warm"},
+    {t:"y alguien a quien, a pesar de todo, sigo queriendo profundamente.", hold:2500, mood:"warm", pause:2000},
+
+    {t:"Algún día quisiera que fueras mi esposa.", hold:5000, mood:"warm", pause:3000},
+    {t:"Por ahora… eso solamente es un sueño.", hold:4000, mood:"warm", pause:2000},
+
+    {t:"Y aunque por momentos siento que ese sueño se desvanece un poquito más…", hold:5000, mood:"warm"},
+    {t:"todavía hay una parte de mí que, mientras trabajo, se queda imaginando tus ojos cafés mirándome.", hold:4500, mood:"warm", pause:2000},
+    {t:"Y sonrío.", hold:4000, mood:"warm", pause:2000},
+    {t:"Porque todavía están ahí.", hold:4000, mood:"warm", pause:2000},
+
+    {t:"Solo espero que durante estos días hayas dormido bien… que hayas comido bien… que estés cuidándote y que, sobre todo, estés bien.", hold:5000, mood:"warm"},
+    {t:"Seguí cuidándote mucho.", hold:4000, mood:"warm", pause:2000},
+
+    {t:"Y no olvidé aquello que alguna vez te dije:", hold:4000, mood:"glow", pause:2000},
+    {t:"Sos mi 18 de abril.", hold:5000, size:"large", mood:"glow", pause:3000, burst:true},
+    {t:"Todavía lo sos.", hold:5000, size:"large", mood:"glow", pause:3000},
+    {t:"Y si llegaste hasta aquí… espero, en algún rincón de mi corazón, seguir siendo yo ese 18 de abril para vos.", hold:5500, mood:"glow", pause:3000},
+
+    {t:"Pero si ya no es así… también lo entiendo.", hold:5000},
+    {t:"Espero que, si algún día alguien ocupa ese lugar, sea alguien que te cuide, que te valore y que te haga muy feliz.", hold:4500},
+    {t:"De verdad.", hold:3000, pause:3000},
+
+    {t:"Y pues… nada.", hold:3000},
+    {t:"Simplemente te extraño.", hold:4000},
+    {t:"Bastante.", hold:4000, pause:2500},
+
+    {t:"Aunque no te hable todos los días, aunque intente seguir con mis cosas… algunas veces cierro los ojos y todavía puedo ver tu sonrisa en mi mente.", hold:5500, pause:2000},
+    {t:"Así que seguí siendo vos.", hold:3500},
+    {t:"Seguí siendo juiciosa.", hold:3000},
+    {t:"Seguí cuidándote.", hold:3000},
+    {t:"Y, por favor… sé feliz.", hold:3500, pause:2000},
+
+    {t:"Quizá algún día, si Dios quiere, volvamos a encontrarnos.", hold:5000, mood:"rise", pause:2000},
+    {t:"Y si ese día llega, espero que esta vez sepamos quedarnos.", hold:5000, mood:"rise", pause:3000},
+
+    {t:"Sé que fui un idiota algunas veces.", hold:4000},
+    {t:"Sé que cometí errores.", hold:3000},
+    {t:"Y probablemente nunca vas a saber completamente cuánto te amo, porque hay cosas que simplemente no sé cómo explicar.", hold:5000, pause:2000},
+
+    {t:"Pero si algún día volvemos a estar juntos, voy a intentar darte todo aquello que alguna vez te prometí.", hold:5000},
+    {t:"Eso sí podés tenerlo por seguro.", hold:4000, pause:2000},
+
+    {t:"Tal vez todo esto suene monótono…", hold:4000, slow:true},
+    {t:"Tal vez aburrido…", hold:3000, slow:true},
+    {t:"Tal vez demasiado cursi.", hold:3000, slow:true, pause:2000},
+    {t:"Pero es todo lo que tengo para decirte.", hold:5000, slow:true, pause:2000},
+
+    {t:"Y no quiero que me agradezcas nada.", hold:5000, slow:true, pause:2000},
+    {t:"Solo… guardalo.", hold:4000, slow:true, pause:2000},
+    {t:"No como una obligación.", hold:4000, slow:true},
+    {t:"No como una promesa.", hold:3000, slow:true, pause:2000},
+    {t:"Simplemente como un pequeño recuerdo de alguien que, incluso desde lejos, todavía piensa en vos con cariño.", hold:5500, slow:true, pause:2500},
+
+    {t:"Te dije que nunca me olvidaría de vos.", hold:5000, pause:2000},
+    {t:"Y no lo he hecho.", hold:4000, pause:2000},
+    {t:"Una parte de mí todavía siente que sos mía… aunque sé que no puedo decir eso si vos ya decidiste seguir adelante.", hold:6000, pause:3000},
+
+    {t:"Así que, si ese es el caso… seguí con tu vida.", hold:4500},
+    {t:"Yo también estoy intentando hacerlo.", hold:3500},
+    {t:"Estoy esforzándome.", hold:3000},
+    {t:"Y voy a seguir haciéndolo.", hold:3500, pause:2000},
+
+    {t:"Para crecer, para ser mejor… y, quizá algún día, si la vida nos vuelve a poner en el mismo camino, poder darte y darnos todo aquello que alguna vez soñamos.", hold:6000, pause:4000},
+
+    {blackout:3000, mood:"black"},
+    {t:"Hasta entonces…", hold:4000, veryslow:true, mood:"black", pause:3000},
+    {t:"cuidate mucho.", hold:5000, veryslow:true, mood:"black", pause:2000},
+    {t:"Y aunque no estés conmigo…", hold:5000, veryslow:true, mood:"black", pause:3000},
+    {t:"ojalá la vida te trate bonito.", hold:6000, veryslow:true, mood:"black", pause:4000},
+
+    {t:"Te extraño.", hold:6000, veryslow:true, mood:"black", pause:4000},
+    {blackout:3000, mood:"black"},
+    {t:"Y te amo.", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true},
+    {blackout:4000, mood:"black"},
+    {t:"En silencio, esta vez. 🤍", hold:8000, size:"small", veryslow:true, mood:"black", pause:0},
+    {t:"y.. la musica jssjs antes de que me leyeras era una que me gusatba escuhcar mucho antes de vos. :), y si", hold:8000, size:"small", veryslow:true, mood:"black", pause:0},
+     {t:"Me encantaba escuchar cuando tambieen laa tarareabas, porque si", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true},
+      {t:"Te escuche siempre", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true}
+    
+  ];
+
+  let currentIndex = 0;
+  let skipRequested = false;
+  let activeTimeouts = [];
+  function clearTimers(){ activeTimeouts.forEach(clearTimeout); activeTimeouts=[]; }
+  function wait(ms){
+    return new Promise(res=>{
+      const id = setTimeout(res, Math.max(0, skipRequested ? Math.min(ms,120) : ms));
+      activeTimeouts.push(id);
+    });
+  }
+
+  function setMood(m){
+    scene.classList.remove('mood-warm','mood-glow','mood-rise','mood-black');
+    if(m) scene.classList.add('mood-'+m);
+  }
+
+  async function playStep(step, i){
+    progressBar.style.width = (100*i/STEPS.length).toFixed(1)+'%';
+    if(step.mood) setMood(step.mood);
+
+    if(step.blackout){
+      lineEl.classList.remove('visible');
+      lineEl.textContent = '';
+      await wait(step.blackout);
+      return;
+    }
+
+    lineEl.className = 'line' + (step.size ? ' size-'+step.size : '') + (step.veryslow ? ' veryslow' : step.slow ? ' slow' : '');
+    lineEl.textContent = step.t;
+    void lineEl.offsetWidth;
+    lineEl.classList.add('visible');
+    if(step.burst) burstSparkles();
+
+    const fadeIn = step.veryslow?1600:step.slow?1200:800;
+    await wait(fadeIn + (step.hold||3000));
+    lineEl.classList.remove('visible');
+    const fadeOut = step.veryslow?1600:step.slow?1200:800;
+    await wait(fadeOut);
+    lineEl.textContent='';
+    await wait(step.pause!==undefined?step.pause:500);
+  }
+
+  function fadeOutMusic(duration){
+    if(!playing){ return; }
+    const steps = 40;
+    const stepTime = duration/steps;
+    const startVol = bgm.volume || 0.85;
+    let count = 0;
+    const iv = setInterval(()=>{
+      count++;
+      bgm.volume = Math.max(0, startVol * (1 - count/steps));
+      if(count >= steps){
+        clearInterval(iv);
+        bgm.pause();
+        bgm.currentTime = 0;
+        bgm.volume = startVol;
+        playing = false;
+        musicBtn.textContent = '♪';
+      }
+    }, stepTime);
+  }
+
+  async function runSequence(){
+    for(let i=0;i<STEPS.length;i++){
+      currentIndex = i;
+      await playStep(STEPS[i], i);
+    }
+    progressBar.style.width = '100%';
+    finish();
+  }
+
+  function finish(){
+    document.getElementById('skip-btn').style.display='none';
+    fadeOutMusic(6000);
+    setTimeout(()=>{
+      document.getElementById('closing').classList.add('show');
+      setTimeout(()=>{
+        document.getElementById('restart-panel').classList.add('show');
+      }, 3500);
+    }, 5000);
+  }
+
+  document.getElementById('close-symbol').addEventListener('click', ()=>{
+    location.reload();
+  });
+
+  skipBtn.addEventListener('click', ()=>{
+    skipRequested = true;
+    skipBtn.textContent = 'saltando…';
+  });
+
+})();
+</script>
+</body>
+</html>
