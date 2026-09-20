@@ -185,25 +185,6 @@
     animation: pulseLabel 2.4s ease-in-out infinite;
   }
   @keyframes pulseLabel{ 0%,100%{opacity:.45;} 50%{opacity:1;} }
-  .tap-label.locked{
-    letter-spacing:.05em;
-    font-size:12px;
-    line-height:1.8;
-    color:rgba(143,151,201,.85);
-    animation:none;
-    max-width:300px;
-  }
-  .tap-label.locked .remaining{ display:block; margin-top:8px; font-size:10px; letter-spacing:.15em; opacity:.6; }
-  .book-wrap.locked{ cursor:default; }
-  .book-wrap.locked .book{ filter:saturate(.6) brightness(.8); }
-  .book-wrap.locked.shake .book{ animation: shake .5s ease; }
-  @keyframes shake{
-    0%,100%{ transform:translateX(0); }
-    20%{ transform:translateX(-6px) rotate(-1deg); }
-    40%{ transform:translateX(5px) rotate(1deg); }
-    60%{ transform:translateX(-4px); }
-    80%{ transform:translateX(3px); }
-  }
 
   /* ===== stage / reading experience ===== */
   #stage{
@@ -334,7 +315,6 @@
     font-family:var(--ui); font-weight:300; font-size:11px; letter-spacing:.08em;
     color:rgba(143,151,201,.65);
   }
-  #restart-panel .lock-remaining{ display:block; margin-top:6px; opacity:.7; }
 
   /* ===== orientation hint ===== */
   #rotate-hint{
@@ -372,7 +352,7 @@
       <div class="cover-back"></div>
       <div class="cover-face">
         <div class="book-spine"></div>
-        <div class="emblem">18 de abril<small>toca si gustas ojitosd cafeces</small></div>
+        <div class="emblem">18 de abril<small>toca si gustas, ojitos cafés</small></div>
       </div>
     </div>
   </div>
@@ -455,7 +435,7 @@
   const musicFile = document.getElementById('musicFile');
   let musicReady = false, playing = false;
 
-  // Intenta cargar automáticamente "music.mp3" si está junto a este archivo (ideal para GitHub Pages).
+  // Intenta cargar automáticamente el archivo de música si está junto a este archivo (ideal para GitHub Pages).
   bgm.src = 'coldplay - the scientist (slowed  reverb).mp3';
   bgm.addEventListener('error', ()=>{ musicReady = false; }, {once:true});
   bgm.addEventListener('canplaythrough', ()=>{ musicReady = true; }, {once:true});
@@ -483,69 +463,11 @@
   const cover = document.getElementById('cover');
   const bookWrap = document.getElementById('bookWrap');
   const stage = document.getElementById('stage');
-  const tapLabelEl = document.querySelector('.tap-label');
-  const coverHintEl = document.querySelector('.cover-hint');
   let started = false;
-
-  /* ---------- bloqueo de 8 horas por navegador/dispositivo -----------
-     Nota honesta: esto se guarda en el almacenamiento local del navegador
-     donde se abre la página. Reconoce ese navegador en ese dispositivo,
-     no es una identificación infalible a nivel de hardware: si la persona
-     usa otro navegador, una ventana de incógnito, o borra los datos del
-     sitio, el bloqueo se reinicia. Para una carta personal como esta,
-     es suficiente. */
-  const LOCK_KEY = 'carta_18abril_ultima_apertura';
-  const LOCK_HOURS = 8;
-
-  function getRemainingLockMs(){
-    const last = parseInt(localStorage.getItem(LOCK_KEY) || '0', 10);
-    if(!last) return 0;
-    const elapsed = Date.now() - last;
-    const total = LOCK_HOURS * 3600 * 1000;
-    return Math.max(0, total - elapsed);
-  }
-  function formatRemaining(ms){
-    const totalMin = Math.ceil(ms/60000);
-    const h = Math.floor(totalMin/60);
-    const m = totalMin % 60;
-    if(h>0) return h+'h '+m+'min';
-    return m+' min';
-  }
-
-  function lockCover(){
-    bookWrap.classList.add('locked');
-    coverHintEl.style.display = 'none';
-    tapLabelEl.classList.add('locked');
-    renderLockText();
-  }
-  function renderLockText(){
-    const remaining = getRemainingLockMs();
-    if(remaining <= 0){
-      bookWrap.classList.remove('locked');
-      tapLabelEl.classList.remove('locked');
-      tapLabelEl.textContent = 'TOCA PARA ABRIR';
-      coverHintEl.style.display = '';
-      return false;
-    }
-    tapLabelEl.innerHTML = 'no puedes volverlo a leer jsjsjs tal vez… mañana si, solo… tal vez<span class="remaining">faltan ' + formatRemaining(remaining) + '</span>';
-    return true;
-  }
-
-  const remainingAtLoad = getRemainingLockMs();
-  if(remainingAtLoad > 0){
-    lockCover();
-    setInterval(()=>{ if(!renderLockText()){} }, 30000);
-  }
 
   bookWrap.addEventListener('click', ()=>{
     if(started) return;
-    if(getRemainingLockMs() > 0){
-      bookWrap.classList.add('shake');
-      setTimeout(()=>bookWrap.classList.remove('shake'), 500);
-      return;
-    }
     started = true;
-    localStorage.setItem(LOCK_KEY, Date.now().toString());
     bookWrap.classList.add('open');
     burstSparkles();
     // intenta iniciar música suavemente en la primera interacción del usuario
@@ -680,10 +602,10 @@
     {t:"Y te amo.", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true},
     {blackout:4000, mood:"black"},
     {t:"En silencio, esta vez. 🤍", hold:8000, size:"small", veryslow:true, mood:"black", pause:0},
-    {t:"y.. la musica jssjs antes de que me leyeras era una que me gusatba escuhcar mucho antes de vos. :), y si", hold:8000, size:"small", veryslow:true, mood:"black", pause:0},
-     {t:"Me encantaba escuchar cuando tambieen laa tarareabas, porque si", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true},
-      {t:"Te escuche siempre", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true}
-    
+    {t:"Y… la música, jsjs, antes de que me leyeras era una que me gustaba escuchar mucho antes de vos. :) Y sí.", hold:8000, size:"small", veryslow:true, mood:"black", pause:0},
+    {t:"Me encantaba escuchar cuando también la tarareabas, porque sí.", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true},
+    {t:"Te escuché siempre.", hold:7000, veryslow:true, size:"large", mood:"black", pause:5000, burst:true}
+
   ];
 
   let currentIndex = 0;
